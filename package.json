@@ -22,6 +22,9 @@
     "typescript": "^5.0.0",
     "web-vitals": "^2.1.4"
   },
+  "overrides": {
+    "typescript": "$typescript"
+  },
   "scripts": {
     "start": "webpack serve --mode development --open",
     "build": "webpack --mode production",
