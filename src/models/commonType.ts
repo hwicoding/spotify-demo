@@ -1,13 +1,23 @@
 export interface ExternalUrls {
-    spotify?: string;
+  spotify?: string;
 }
 
 export interface Image {
-    url: string;
-    height: number | null;
-    width: number | null;
+  url: string;
+  height: number | null;
+  width: number | null;
 }
 
 export interface Restrictions {
-    reason?: string;
+  reason?: string;
+}
+
+export interface Followers {
+  href: string | null;
+  total: number;
+}
+
+export interface ExplicitContent {
+  filter_enabled: boolean;
+  filter_locked: boolean;
 }
