@@ -7,7 +7,8 @@ const useExchangeToken = () => {
   return useMutation<ExchangeTokenResponse, Error, { code: string; codeVerifier: string }>({
     mutationFn: ({ code, codeVerifier }) => exchangeToken(code, codeVerifier),
     onSuccess: (data) => {
-      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("accessToken", data.access_token);
+      localStorage.removeItem("code_verifier");
       queryClient.invalidateQueries({
         queryKey: ["current-user-profile"],
       });
