@@ -17,6 +17,7 @@ const SideBar = styled("div")(({ theme }) => ({
   height: "100%",
   display: "flex",
   flexDirection: "column",
+  gap: "8px",
   [theme.breakpoints.down("sm")]: {
     display: "none",
   },
@@ -28,8 +29,6 @@ const ContentBox = styled(Box)(({ theme }) => ({
   color: theme.palette.text.primary,
   width: "100%",
   padding: "8px",
-  marginBottom: "8px",
-  marginRight: "8px",
 }));
 
 const NavList = styled("ul")({
@@ -71,12 +70,12 @@ const AppLayout = () => {
             </StyledNavLink>
           </NavList>
         </ContentBox>
-        <ContentBox height="100%">
+        <ContentBox sx={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
           <LibraryHead />
           <Library />
         </ContentBox>
       </SideBar>
-      <ContentBox>
+      <ContentBox sx={{ flex: 1, display: "flex", flexDirection: "column", ml: 1 }}>
         <Navbar />
         <Outlet />
       </ContentBox>
