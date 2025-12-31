@@ -71,7 +71,7 @@ const PlaylistDetailPage = () => {
             <ResponsiveTypography variant="h1">
               {playlist?.name}
             </ResponsiveTypography>
-            {playlist?.description && (
+            {playlist?.description && playlist.description !== "null" && (
               <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 1 }}>
                 {playlist.description}
               </Typography>

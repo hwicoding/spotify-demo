@@ -25,7 +25,7 @@ const Playlist = ({ playlists }: PlaylistProps) => {
           image={(item.images && item.images[0]?.url) || null}
           id={item.id || ""}
           key={item.id}
-          artistName={"Playlist •" + item.owner?.display_name}
+          artistName={`Playlist • ${item.owner?.display_name || "Unknown"}`}
         />
       ))}
     </div>
