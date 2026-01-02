@@ -1,39 +1,57 @@
 import { SimplifiedAlbum } from "./album";
 import { Artist } from "./artist";
-import { ExternalUrls, Restrictions } from "./commonType";
+import { ExternalUrls, Image, Restriction } from "./commonType";
+import { Show } from "./show";
 
-export interface SimplifiedTrack {
-  artists: Artist[];
+export interface Track {
+  album?: SimplifiedAlbum;
+  artists?: Artist[];
   available_markets?: string[];
-  disc_number: number;
+  disc_number?: number;
+  duration_ms?: number;
+  explicit?: boolean;
+  external_ids?: {
+    isrc: string;
+    ean: string;
+    upc: string;
+  };
+  external_urls?: ExternalUrls;
+  href?: string;
+  id?: string;
+  is_playable?: boolean;
+  linked_from?: Track;
+  restrictions?: Restriction;
+
+  name?: string;
+  popularity?: number;
+  preview_url: string | null;
+  track_number?: number;
+  type?: "track";
+  uri?: string;
+  is_local?: boolean;
+}
+
+export interface Episode {
+  description: string;
+  html_description: string;
+
   duration_ms: number;
   explicit: boolean;
   external_urls: ExternalUrls;
   href: string;
   id: string;
-  is_playable?: boolean;
-  linked_from?: {
-    external_urls: ExternalUrls;
-    href: string;
-    id: string;
-    type: string;
-    uri: string;
-  };
-  restrictions?: Restrictions;
+  images: Image[];
+  is_externally_hosted: boolean;
+  is_playable: boolean;
   name: string;
-  preview_url: string | null;
-  track_number: number;
-  type: string;
+  release_date: string;
+  release_date_precision: string;
+  type: "episode";
   uri: string;
-  is_local: boolean;
-}
-
-export interface Track extends SimplifiedTrack {
-  album: SimplifiedAlbum;
-  external_ids: {
-    isrc?: string;
-    ean?: string;
-    upc?: string;
+  resume_point?: {
+    fully_played?: boolean;
+    resume_position_ms?: number;
   };
-  popularity: number;
+  restrictions?: Restriction;
+  show: Show;
 }

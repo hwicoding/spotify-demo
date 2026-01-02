@@ -1,103 +1,149 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate, useParams } from "react-router";
 import useGetPlaylist from "../../hooks/useGetPlaylist";
-import { Box, Grid, styled, Typography } from "@mui/material";
+import {
+  Box,
+  Grid,
+  styled,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import DefaultImage from "../../common/components/DefaultImage";
 import LoadingSpinner from "../../common/components/LoadingSpinner/LoadingSpinner";
 import ErrorMessage from "../../common/components/ErrorMessage";
+import useGetPlaylistItems from "../../hooks/useGetPlaylistItems";
+import DesktopPlaylistItem from "./components/DesktopPlaylistItem";
+import { PAGE_LIMIT } from "../../configs/commonConfig";
+import { useInView } from "react-intersection-observer";
 
 const PlaylistHeader = styled(Grid)({
   display: "flex",
-  alignItems: "center",
-  background: "linear-gradient(transparent 0, rgba(0, 0, 0, .5) 100%)",
-  padding: "16px",
+  padding: "40px 30px",
+  background: "linear-gradient(transparent, rgba(0,0,0,0.5))",
 });
 
-const ImageGrid = styled(Grid)(({ theme }) => ({
-  [theme.breakpoints.down("sm")]: {
-    display: "flex",
-    justifyContent: "center",
-    width: "100%",
-  },
-}));
-
-const AlbumImage = styled("img")(({ theme }) => ({
+const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
+  background: theme.palette.background.paper,
+  color: theme.palette.common.white,
+  height: "calc(100% - 64px)",
   borderRadius: "8px",
-  height: "auto",
-  width: "100%",
-  boxShadow: "0 4px 60px rgba(0,0,0,.5)",
-  [theme.breakpoints.down("md")]: {
-    maxWidth: "200px",
+  overflowY: "auto",
+  "&::-webkit-scrollbar": {
+    display: "none",
   },
-}));
-
-const ResponsiveTypography = styled(Typography)(({ theme }) => ({
-  fontSize: "3rem",
-  textAlign: "left",
-  fontWeight: 900,
-  [theme.breakpoints.down("md")]: {
-    fontSize: "1.5rem",
-  },
+  msOverflowStyle: "none", // IE and Edge
+  scrollbarWidth: "none", // Firefox
 }));
 
 const PlaylistDetailPage = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
+  const [ref, inView] = useInView();
 
   if (!id) return <Navigate to="/" />;
 
   const { data: playlist, isLoading, error } = useGetPlaylist({ playlist_id: id });
 
+  const {
+    data: playlistItems,
+    isLoading: playlistItemsLoading,
+    error: playlistItemsError,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useGetPlaylistItems({ playlist_id: id, limit: PAGE_LIMIT });
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorMessage errorMessage={error.message} />;
 
   return (
-    <Box sx={{ flex: 1, overflowY: "auto", color: "white" }}>
-      <PlaylistHeader container spacing={4}>
-        <ImageGrid size={{ xs: 12, sm: 4, md: 3, lg: 2 }}>
-          {playlist?.images && playlist.images.length > 0 ? (
-            <AlbumImage src={playlist.images[0].url} alt={playlist.name} />
+    <Box>
+      <PlaylistHeader container spacing={4} alignItems="flex-end">
+        <Grid size="auto">
+          {playlist?.images?.[0]?.url ? (
+            <img
+              src={playlist.images[0].url}
+              alt={playlist.name}
+              style={{ width: 232, height: 232, boxShadow: "0 4px 60px rgba(0,0,0,0.5)" }}
+            />
           ) : (
-            <DefaultImage>
-              <MusicNoteIcon sx={{ fontSize: 80, color: "#b3b3b3" }} />
+            <DefaultImage sx={{ width: 232, height: 232 }}>
+              <MusicNoteIcon style={{ fontSize: 100 }} />
             </DefaultImage>
           )}
-        </ImageGrid>
-        <Grid size={{ xs: 12, sm: 8, md: 9, lg: 10 }}>
-          <Box display="flex" flexDirection="column" justifyContent="flex-end" height="100%">
-            <Typography variant="subtitle2" fontWeight={700} sx={{ mb: 1, textTransform: "uppercase" }}>
-              Playlist
+        </Grid>
+        <Grid size="grow">
+          <Typography variant="overline" fontWeight="bold">
+            PLAYLIST
+          </Typography>
+          <Typography variant="h1" fontWeight="bold" sx={{ fontSize: "6rem", my: 2 }}>
+            {playlist?.name}
+          </Typography>
+          <Box display="flex" alignItems="center">
+            <Typography variant="body2" fontWeight="bold">
+              {playlist?.owner?.display_name}
             </Typography>
-            <ResponsiveTypography variant="h1">
-              {playlist?.name}
-            </ResponsiveTypography>
-            {playlist?.description && playlist.description !== "null" && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 1 }}>
-                {playlist.description}
+            {playlist?.tracks?.total !== undefined && (
+              <Typography variant="body2" color="rgba(255,255,255,0.7)" ml={1}>
+                • {playlist.tracks.total} songs
               </Typography>
             )}
-            <Box display="flex" alignItems="center" mt={2} flexWrap="wrap" gap={1}>
-              <Typography variant="subtitle2" fontWeight={700}>
-                {playlist?.owner?.display_name || "Unknown"}
-              </Typography>
-              {playlist?.tracks?.total !== undefined && (
-                <Typography variant="subtitle2" color="text.secondary">
-                  • {playlist.tracks.total.toLocaleString()} songs
-                </Typography>
-              )}
-              {playlist?.followers?.total !== undefined && (
-                <Typography variant="subtitle2" color="text.secondary">
-                  • {playlist.followers.total.toLocaleString()} likes
-                </Typography>
-              )}
-            </Box>
           </Box>
         </Grid>
       </PlaylistHeader>
 
-      {/* Track list section will go here */}
+      <StyledTableContainer>
+        {playlist?.tracks?.total === 0 ? (
+          <Typography p={4}>No tracks in this playlist.</Typography>
+        ) : (
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>#</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Album</TableCell>
+                <TableCell>Date added</TableCell>
+                <TableCell>Duration</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {playlistItems?.pages.map((page, pageIndex) =>
+                page.items.map((item, itemIndex) => {
+                  return (
+                    <DesktopPlaylistItem
+                      item={item}
+                      key={`${pageIndex}-${itemIndex}`}
+                      index={pageIndex * PAGE_LIMIT + itemIndex}
+                    />
+                  );
+                })
+              )}
+              <TableRow sx={{ height: "5px" }} ref={ref} />
+              {isFetchingNextPage && (
+                <TableRow>
+                  <TableCell colSpan={5} align="center">
+                    <LoadingSpinner />
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
+      </StyledTableContainer>
+
       <Box p={3}>
-        {/* TODO: Implement Track List */}
+        {/* Additional sections can go here */}
       </Box>
     </Box>
   );

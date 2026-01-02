@@ -8,7 +8,7 @@ export interface Image {
   width: number | null;
 }
 
-export interface Restrictions {
+export interface Restriction {
   reason?: string;
 }
 

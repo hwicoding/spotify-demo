@@ -1,6 +1,6 @@
 import { ApiResponse } from "./apiResponse";
-import { ExternalUrls, Image } from "./commonType";
-import { Track } from "./track";
+import { ExternalUrls, Followers, Image } from "./commonType";
+import { Episode, Track } from "./track";
 
 export interface GetCurrentUserPlaylistsRequest {
   limit?: number;
@@ -55,15 +55,24 @@ export interface GetPlaylistRequest {
 
 export type GetPlaylistResponse = Playlist;
 
+
+export interface GetPlaylistItemsRequest extends GetPlaylistRequest {
+  offset?: number;
+  limit?: number;
+}
+
+export type GetPlaylistItemsResponse = ApiResponse<PlaylistTrack>;
+
 export interface PlaylistTrack {
-  added_at: string | null;
-  added_by: {
+  added_at?: string | null;
+  added_by?: {
     external_urls?: ExternalUrls;
+    followers?: Followers;
     href?: string;
     id?: string;
     type?: string;
     uri?: string;
   } | null;
-  is_local: boolean;
-  track: Track;
+  is_local?: boolean;
+  track: Track | Episode;
 }
