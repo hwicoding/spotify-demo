@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import axios from "axios";
 import { Navigate, useParams } from "react-router";
 import useGetPlaylist from "../../hooks/useGetPlaylist";
 import {
@@ -17,6 +18,7 @@ import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import DefaultImage from "../../common/components/DefaultImage";
 import LoadingSpinner from "../../common/components/LoadingSpinner/LoadingSpinner";
 import ErrorMessage from "../../common/components/ErrorMessage";
+import LoginButton from "../../common/components/LoginButton";
 import useGetPlaylistItems from "../../hooks/useGetPlaylistItems";
 import DesktopPlaylistItem from "./components/DesktopPlaylistItem";
 import { PAGE_LIMIT } from "../../configs/commonConfig";
@@ -31,14 +33,7 @@ const PlaylistHeader = styled(Grid)({
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   background: theme.palette.background.paper,
   color: theme.palette.common.white,
-  height: "calc(100% - 64px)",
   borderRadius: "8px",
-  overflowY: "auto",
-  "&::-webkit-scrollbar": {
-    display: "none",
-  },
-  msOverflowStyle: "none", // IE and Edge
-  scrollbarWidth: "none", // Firefox
 }));
 
 const PlaylistDetailPage = () => {
@@ -65,7 +60,30 @@ const PlaylistDetailPage = () => {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorMessage errorMessage={error.message} />;
+
+  if (error || playlistItemsError) {
+    const isAuthError =
+      (axios.isAxiosError(error) && error.response?.status === 401) ||
+      (axios.isAxiosError(playlistItemsError) && playlistItemsError.response?.status === 401);
+
+    if (isAuthError) {
+      return (
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          height="100%"
+          flexDirection="column"
+        >
+          <Typography variant="h2" fontWeight={700} mb="20px">
+            다시 로그인 하세요
+          </Typography>
+          <LoginButton />
+        </Box>
+      );
+    }
+    return <ErrorMessage errorMessage="Failed to load" />;
+  }
 
   return (
     <Box>
@@ -107,7 +125,7 @@ const PlaylistDetailPage = () => {
         {playlist?.tracks?.total === 0 ? (
           <Typography p={4}>No tracks in this playlist.</Typography>
         ) : (
-          <Table>
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell>#</TableCell>
@@ -141,10 +159,6 @@ const PlaylistDetailPage = () => {
           </Table>
         )}
       </StyledTableContainer>
-
-      <Box p={3}>
-        {/* Additional sections can go here */}
-      </Box>
     </Box>
   );
 };

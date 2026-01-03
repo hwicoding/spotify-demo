@@ -75,9 +75,11 @@ const AppLayout = () => {
           <Library />
         </ContentBox>
       </SideBar>
-      <ContentBox sx={{ flex: 1, display: "flex", flexDirection: "column", ml: 1 }}>
+      <ContentBox sx={{ flex: 1, display: "flex", flexDirection: "column", ml: 1, overflow: "hidden" }}>
         <Navbar />
-        <Outlet />
+        <Box sx={{ flex: 1, overflowY: "auto" }}>
+          <Outlet />
+        </Box>
       </ContentBox>
     </Layout>
   );
