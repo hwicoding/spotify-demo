@@ -5,6 +5,7 @@ import { SEARCH_TYPE } from "../../../models/search";
 import SearchResultList from "./SearchResultList";
 import LoadingSpinner from "../../../common/components/LoadingSpinner/LoadingSpinner";
 import SearchIcon from "@mui/icons-material/Search";
+import useAddItemsToPlaylist from "../../../hooks/useAddItemsToPlaylist";
 
 const SearchContainer = styled(Box)({
   padding: "16px",
@@ -54,8 +55,13 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const EmptyPlaylistWithSearch = () => {
+interface EmptyPlaylistWithSearchProps {
+  playlist_id: string;
+}
+
+const EmptyPlaylistWithSearch = ({ playlist_id }: EmptyPlaylistWithSearchProps) => {
   const [keyword, setKeyword] = useState<string>("");
+  const { mutate: addItems } = useAddItemsToPlaylist();
 
   const {
     data,
@@ -73,6 +79,10 @@ const EmptyPlaylistWithSearch = () => {
   const hasResults = tracks.length > 0;
   const handleSearchKeyword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(event.target.value);
+  };
+
+  const handleAddTrack = (trackUri: string) => {
+    addItems({ playlist_id, uris: [trackUri] });
   };
 
   return (
@@ -111,6 +121,7 @@ const EmptyPlaylistWithSearch = () => {
             hasNextPage={hasNextPage}
             isFetchingNextPage={isFetchingNextPage}
             fetchNextPage={fetchNextPage}
+            onAdd={handleAddTrack}
           />
         ) : (
           <Box textAlign="center" py={8}>

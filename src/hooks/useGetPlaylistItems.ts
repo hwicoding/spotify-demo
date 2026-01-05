@@ -4,7 +4,7 @@ import { getPlaylistItems } from "../apis/playlistApi";
 
 export const useGetPlaylistItems = (params: GetPlaylistItemsRequest) => {
   return useInfiniteQuery({
-    queryKey: ["playlist-items", params],
+    queryKey: ["playlist-items", params.playlist_id],
     queryFn: ({ pageParam }) => {
       return getPlaylistItems({ offset: pageParam, ...params });
     },

@@ -83,3 +83,13 @@ export interface CreatePlaylistRequest {
   collaborative?: boolean;
   description?: string;
 }
+
+export interface AddItemsToPlaylistRequest {
+  playlist_id: string;
+  uris: string[];
+  position?: number;
+}
+
+export interface AddItemsToPlaylistResponse {
+  snapshot_id: string;
+}

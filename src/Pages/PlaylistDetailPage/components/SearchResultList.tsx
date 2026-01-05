@@ -39,12 +39,14 @@ interface SearchResultListProps {
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
   fetchNextPage: () => void;
+  onAdd: (trackUri: string) => void;
 }
 const SearchResultList = ({
   list,
   hasNextPage,
   isFetchingNextPage,
   fetchNextPage,
+  onAdd,
 }: SearchResultListProps) => {
   const [ref, inView] = useInView();
 
@@ -88,6 +90,7 @@ const SearchResultList = ({
               <Button
                 variant="outlined"
                 size="small"
+                onClick={() => track.uri && onAdd(track.uri)}
                 sx={{
                   borderRadius: "20px",
                   color: "white",
