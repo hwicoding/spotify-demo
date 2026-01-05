@@ -55,3 +55,29 @@ export interface Episode {
   restrictions?: Restriction;
   show: Show;
 }
+
+export type SimplifiedEpisode = Omit<Episode, "show">
+
+export interface SimplifiedAudiobook {
+  author: string;
+  available_markets?: string[];
+  copyright: string;
+  description: string;
+  html_description?: string;
+  edition?: string;
+  explicit: boolean;
+  external_urls: ExternalUrls;
+  href: string;
+  id: string;
+  images: Image[];
+  languages: string[];
+  media_type: string;
+  name: string;
+  narrator: {
+    name: string;
+  }[];
+  publisher: string;
+  type: "audiobook";
+  uri: string;
+  restrictions?: Restriction;
+}

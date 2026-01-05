@@ -23,17 +23,29 @@ import useGetPlaylistItems from "../../hooks/useGetPlaylistItems";
 import DesktopPlaylistItem from "./components/DesktopPlaylistItem";
 import { PAGE_LIMIT } from "../../configs/commonConfig";
 import { useInView } from "react-intersection-observer";
+import EmptyPlaylistWithSearch from "./components/EmptyPlaylistWithSearch";
 
 const PlaylistHeader = styled(Grid)({
   display: "flex",
-  padding: "40px 30px",
-  background: "linear-gradient(transparent, rgba(0,0,0,0.5))",
+  padding: "80px 30px 40px",
+  background: "linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.5) 100%)",
+  minHeight: "340px",
 });
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
-  background: theme.palette.background.paper,
+  background: "transparent",
   color: theme.palette.common.white,
-  borderRadius: "8px",
+  padding: "0 30px",
+  "& .MuiTableHead-root": {
+    "& .MuiTableCell-root": {
+      backgroundColor: "transparent",
+      borderBottom: "1px solid rgba(255,255,255,0.1)",
+      color: "rgba(255,255,255,0.7)",
+      textTransform: "uppercase",
+      fontSize: "0.75rem",
+      fontWeight: "bold",
+    },
+  },
 }));
 
 const PlaylistDetailPage = () => {
@@ -123,7 +135,7 @@ const PlaylistDetailPage = () => {
 
       <StyledTableContainer>
         {playlist?.tracks?.total === 0 ? (
-          <Typography p={4}>No tracks in this playlist.</Typography>
+          <EmptyPlaylistWithSearch />
         ) : (
           <Table stickyHeader>
             <TableHead>

@@ -57,7 +57,7 @@ const Library = () => {
     return <ErrorMessage errorMessage={error.message} />;
   }
 
-  const allPlaylists = data?.pages.flatMap((page) => page.items) || [];
+  const allPlaylists = data?.pages.flatMap((page) => page.items ?? []) || [];
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
