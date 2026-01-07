@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography, TextField, InputAdornment, Grid, Card, CardMedia, styled } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import { useNavigate } from "react-router";
 import useGetCategories from "../../hooks/useGetCategories";
 
 const SearchInput = styled(TextField)(({ theme }) => ({
@@ -68,12 +69,26 @@ const getRandomColor = () => {
 
 const SearchPage = () => {
   const { data: categoriesData, isLoading } = useGetCategories();
+  const [searchValue, setSearchValue] = React.useState("");
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchValue.trim()) {
+        navigate(`/search/${encodeURIComponent(searchValue.trim())}`);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchValue, navigate]);
 
   return (
     <Box sx={{ p: 4 }}>
       <Box sx={{ mb: 4 }}>
         <SearchInput
           placeholder="What do you want to listen to?"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
