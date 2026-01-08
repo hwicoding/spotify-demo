@@ -54,6 +54,13 @@ const Library = () => {
     return <LoadingSpinner />;
   }
   if (error) {
+    if (error.message.includes("401")) {
+      return (
+        <Box sx={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden" }}>
+          <EmptyPlaylist />
+        </Box>
+      );
+    }
     return <ErrorMessage errorMessage={error.message} />;
   }
 
