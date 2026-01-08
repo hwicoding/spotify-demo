@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { useEffect } from "react";
 import LoadingSpinner from "../../../common/components/LoadingSpinner/LoadingSpinner";
+import AddToPlaylistMenu from "../../../common/components/AddToPlaylistMenu/AddToPlaylistMenu";
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   background: theme.palette.background.paper,
@@ -87,24 +88,29 @@ const SearchResultList = ({
               </Typography>
             </TableCell>
             <TableCell align="right" sx={{ pr: 2 }}>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => track.uri && onAdd(track.uri)}
-                sx={{
-                  borderRadius: "20px",
-                  color: "white",
-                  borderColor: "rgba(255,255,255,0.3)",
-                  textTransform: "none",
-                  fontWeight: 600,
-                  "&:hover": {
-                    borderColor: "white",
-                    backgroundColor: "rgba(255,255,255,0.1)",
-                  },
-                }}
-              >
-                Add
-              </Button>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 1 }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => track.uri && onAdd(track.uri)}
+                  sx={{
+                    borderRadius: "20px",
+                    color: "white",
+                    borderColor: "rgba(255,255,255,0.3)",
+                    textTransform: "none",
+                    fontWeight: 600,
+                    "&:hover": {
+                      borderColor: "white",
+                      backgroundColor: "rgba(255,255,255,0.1)",
+                    },
+                  }}
+                >
+                  Add
+                </Button>
+                {track.uri && (
+                  <AddToPlaylistMenu trackUri={track.uri} trackName={track.name || "Unknown Track"} />
+                )}
+              </Box>
             </TableCell>
           </StyledTableRow>
         ))}

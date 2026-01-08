@@ -2,6 +2,7 @@ import { Box, styled, TableCell, TableRow, Typography } from "@mui/material";
 import { PlaylistTrack } from "../../../models/playlist";
 import { Episode, Track } from "../../../models/track";
 import moment from "moment";
+import AddToPlaylistMenu from "../../../common/components/AddToPlaylistMenu/AddToPlaylistMenu";
 
 interface DesktopPlaylistItemProps {
   index: number;
@@ -59,6 +60,11 @@ const DesktopPlaylistItem = ({ item, index }: DesktopPlaylistItemProps) => {
       ) : (
         <TableCell>{moment(item.track.duration_ms).format("mm:ss")}</TableCell>
       )}
+      <TableCell align="right">
+        {item.track.uri && (
+          <AddToPlaylistMenu trackUri={item.track.uri} trackName={item.track.name || "Unknown Track"} />
+        )}
+      </TableCell>
     </StyledTableRow>
   );
 };

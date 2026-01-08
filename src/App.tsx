@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import { Routes, Route, useNavigate, useSearchParams } from 'react-router';
 import LoadingSpinner from './common/components/LoadingSpinner/LoadingSpinner';
+import { ToastProvider } from './common/components/Toast/ToastContext';
 import useExchangeToken from './hooks/useExchangeToken';
 
 const AppLayout = React.lazy(() => import('./layout/AppLayout'));
@@ -54,17 +55,19 @@ function App() {
   }, [code, codeVerifier, exchangeToken, navigate]);
 
   return (
-    <Suspense fallback={<LoadingSpinner />}>
-      <Routes>
-        <Route path="/" element={<AppLayout />}>
-          <Route index element={<HomePage />} />
-          <Route path="search" element={<SearchPage />} />
-          <Route path="search/:keyword" element={<SearchWithKeywordPage />} />
-          <Route path="playlist/:id" element={<PlaylistDetailPage />} />
-          <Route path="/playlist" element={<PlaylistPage />} />
-        </Route>
-      </Routes>
-    </Suspense>
+    <ToastProvider>
+      <Suspense fallback={<LoadingSpinner />}>
+        <Routes>
+          <Route path="/" element={<AppLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="search" element={<SearchPage />} />
+            <Route path="search/:keyword" element={<SearchWithKeywordPage />} />
+            <Route path="playlist/:id" element={<PlaylistDetailPage />} />
+            <Route path="/playlist" element={<PlaylistPage />} />
+          </Route>
+        </Routes>
+      </Suspense>
+    </ToastProvider>
   );
 }
 
