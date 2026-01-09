@@ -11,6 +11,7 @@ const useAddItemsToPlaylist = () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["playlist-detail", variables.playlist_id] }),
         queryClient.invalidateQueries({ queryKey: ["playlist-items", variables.playlist_id] }),
+        queryClient.invalidateQueries({ queryKey: ["playlist-thumbnail", variables.playlist_id] }),
         queryClient.invalidateQueries({ queryKey: ["current-user-playlists"] }),
       ]);
     },

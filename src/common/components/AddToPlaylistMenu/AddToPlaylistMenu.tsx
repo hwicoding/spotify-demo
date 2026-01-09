@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
-import { IconButton, Menu, MenuItem, Typography, Box, styled, CircularProgress } from '@mui/material';
+import { IconButton, Menu, MenuItem, Typography, Box, styled, CircularProgress, Divider } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import AddIcon from '@mui/icons-material/Add';
 import useGetCurrentUserPlaylists from '../../../hooks/useGetCurrentUserPlaylists';
 import useAddItemsToPlaylist from '../../../hooks/useAddItemsToPlaylist';
+import useCreatePlaylist from '../../../hooks/useCreatePlaylist';
 import { useToast } from '../Toast/ToastContext';
+import CreatePlaylistDialog from '../CreatePlaylistDialog/CreatePlaylistDialog';
 
 const StyledMenu = styled(Menu)(({ theme }) => ({
   '& .MuiPaper-root': {
     backgroundColor: 'rgba(40, 40, 40, 0.95)',
     backdropFilter: 'blur(10px)',
     color: '#fff',
-    minWidth: '200px',
-    maxHeight: '400px',
+    minWidth: '220px',
+    maxHeight: '450px',
     border: '1px solid rgba(255,255,255,0.1)',
     boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
     borderRadius: '4px',
@@ -47,11 +50,13 @@ interface AddToPlaylistMenuProps {
 
 const AddToPlaylistMenu = ({ trackUri, trackName }: AddToPlaylistMenuProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const open = Boolean(anchorEl);
   const { showToast } = useToast();
 
   const { data: playlistsData, isLoading: playlistsLoading } = useGetCurrentUserPlaylists({ limit: 50 });
   const { mutate: addItems } = useAddItemsToPlaylist();
+  const { mutate: createPlaylist, isPending: isCreating } = useCreatePlaylist();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
@@ -73,6 +78,34 @@ const AddToPlaylistMenu = ({ trackUri, trackName }: AddToPlaylistMenuProps) => {
         onError: () => {
           showToast('Failed to add track', 'error');
         },
+      }
+    );
+  };
+
+  const handleCreateAndAdd = (name: string, description: string) => {
+    createPlaylist(
+      { name, description },
+      {
+        onSuccess: (newPlaylist) => {
+          addItems(
+            { playlist_id: newPlaylist.id, uris: [trackUri] },
+            {
+              onSuccess: () => {
+                showToast(`Created ${name} and added track`);
+                setIsDialogOpen(false);
+                handleClose();
+              },
+              onError: () => {
+                showToast('Playlist created but failed to add track', 'warning');
+                setIsDialogOpen(false);
+                handleClose();
+              }
+            }
+          );
+        },
+        onError: () => {
+          showToast('Failed to create playlist', 'error');
+        }
       }
     );
   };
@@ -107,6 +140,19 @@ const AddToPlaylistMenu = ({ trackUri, trackName }: AddToPlaylistMenuProps) => {
             Add to playlist
           </Typography>
         </Box>
+
+        <StyledMenuItem onClick={() => {
+          setIsDialogOpen(true);
+          handleClose();
+        }}>
+          <AddIcon sx={{ color: '#1db954', fontSize: 20 }} />
+          <Typography variant="body2" fontWeight={600} sx={{ color: '#1db954' }}>
+            New playlist
+          </Typography>
+        </StyledMenuItem>
+
+        <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+
         {playlistsLoading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
             <CircularProgress size={24} sx={{ color: '#1db954' }} />
@@ -130,6 +176,14 @@ const AddToPlaylistMenu = ({ trackUri, trackName }: AddToPlaylistMenuProps) => {
           ))
         )}
       </StyledMenu>
+
+      <CreatePlaylistDialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onCreate={handleCreateAndAdd}
+        isLoading={isCreating}
+        initialName={`${trackName} Playlist`}
+      />
     </>
   );
 };

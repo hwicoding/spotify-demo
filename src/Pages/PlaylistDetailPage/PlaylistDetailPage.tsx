@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { Navigate, useParams } from "react-router";
 import useGetPlaylist from "../../hooks/useGetPlaylist";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Box,
   Grid,
@@ -24,6 +25,7 @@ import DesktopPlaylistItem from "./components/DesktopPlaylistItem";
 import { PAGE_LIMIT } from "../../configs/commonConfig";
 import { useInView } from "react-intersection-observer";
 import EmptyPlaylistWithSearch from "./components/EmptyPlaylistWithSearch";
+import { Episode } from "../../models/track";
 
 const PlaylistHeader = styled(Grid)({
   display: "flex",
@@ -51,6 +53,7 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
 const PlaylistDetailPage = () => {
   const { id } = useParams();
   const [ref, inView] = useInView();
+  const queryClient = useQueryClient();
 
   if (!id) return <Navigate to="/" />;
 
@@ -70,6 +73,44 @@ const PlaylistDetailPage = () => {
       fetchNextPage();
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const firstTrack = playlistItems?.pages[0]?.items[0]?.track;
+  const fallbackImage = (firstTrack && "album" in firstTrack && firstTrack.album?.images?.[0]?.url) ||
+    (firstTrack && "images" in firstTrack && (firstTrack as Episode).images?.[0]?.url);
+
+  // 상세 페이지에서 계산된 Fallback 이미지를 사이드바 캐시에도 강제로 주입합니다.
+  useEffect(() => {
+    if (fallbackImage && playlist && id) {
+      // 이미 플레이리스트 원본 이미지가 있다면 (Spotify가 생성 완료했다면) 주입하지 않습니다.
+      const hasOriginalImage = playlist.images && playlist.images.length > 0 && !!playlist.images[0].url;
+      if (hasOriginalImage) return;
+
+      // 사이드바 목록 캐시를 직접 수정하여 즉시 반영되도록 합니다.
+      queryClient.setQueriesData({ queryKey: ["current-user-playlists"] }, (oldData: any) => {
+        if (!oldData || !oldData.pages) return oldData;
+
+        return {
+          ...oldData,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            items: page.items.map((item: any) => {
+              if (item.id === id) {
+                // 이미지가 없거나, 우리가 주입한 이미지와 다를 경우에만 업데이트
+                const currentImg = item.images?.[0]?.url;
+                if (!currentImg || currentImg !== fallbackImage) {
+                  return {
+                    ...item,
+                    images: [{ url: fallbackImage }]
+                  };
+                }
+              }
+              return item;
+            }),
+          })),
+        };
+      });
+    }
+  }, [fallbackImage, playlist, id, queryClient]);
 
   if (isLoading) return <LoadingSpinner />;
 
@@ -105,6 +146,12 @@ const PlaylistDetailPage = () => {
             <img
               src={playlist.images[0].url}
               alt={playlist.name}
+              style={{ width: 232, height: 232, boxShadow: "0 4px 60px rgba(0,0,0,0.5)" }}
+            />
+          ) : fallbackImage ? (
+            <img
+              src={fallbackImage}
+              alt={playlist?.name}
               style={{ width: 232, height: 232, boxShadow: "0 4px 60px rgba(0,0,0,0.5)" }}
             />
           ) : (
