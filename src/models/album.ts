@@ -3,7 +3,7 @@ import { Artist } from "./artist";
 import { ExternalUrls, Image, Restriction } from "./commonType";
 
 export interface GetNewReleasesResponse {
-  albums: ApiResponse<SimplifiedAlbum[]>
+  albums: ApiResponse<SimplifiedAlbum>
 }
 
 export interface SimplifiedAlbum {

@@ -81,3 +81,8 @@ export interface SimplifiedAudiobook {
   uri: string;
   restrictions?: Restriction;
 }
+
+export interface RecommendationsResponse {
+  tracks: Track[];
+  seeds: any[];
+}
