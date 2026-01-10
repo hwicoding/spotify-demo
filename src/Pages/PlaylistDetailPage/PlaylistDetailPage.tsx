@@ -27,12 +27,19 @@ import { useInView } from "react-intersection-observer";
 import EmptyPlaylistWithSearch from "./components/EmptyPlaylistWithSearch";
 import { Episode } from "../../models/track";
 
-const PlaylistHeader = styled(Grid)({
+const PlaylistHeader = styled(Grid)(({ theme }) => ({
   display: "flex",
   padding: "80px 30px 40px",
   background: "linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.5) 100%)",
   minHeight: "340px",
-});
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column",
+    alignItems: "center",
+    padding: "40px 16px 24px",
+    textAlign: "center",
+    minHeight: "auto",
+  },
+}));
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   background: "transparent",
@@ -146,16 +153,16 @@ const PlaylistDetailPage = () => {
             <img
               src={playlist.images[0].url}
               alt={playlist.name}
-              style={{ width: 232, height: 232, boxShadow: "0 4px 60px rgba(0,0,0,0.5)" }}
+              style={{ width: "100%", maxWidth: 232, height: "auto", aspectRatio: "1/1", boxShadow: "0 4px 60px rgba(0,0,0,0.5)" }}
             />
           ) : fallbackImage ? (
             <img
               src={fallbackImage}
               alt={playlist?.name}
-              style={{ width: 232, height: 232, boxShadow: "0 4px 60px rgba(0,0,0,0.5)" }}
+              style={{ width: "100%", maxWidth: 232, height: "auto", aspectRatio: "1/1", boxShadow: "0 4px 60px rgba(0,0,0,0.5)" }}
             />
           ) : (
-            <DefaultImage sx={{ width: 232, height: 232 }}>
+            <DefaultImage sx={{ width: "100%", maxWidth: 232, aspectRatio: "1/1" }}>
               <MusicNoteIcon style={{ fontSize: 100 }} />
             </DefaultImage>
           )}
@@ -164,10 +171,10 @@ const PlaylistDetailPage = () => {
           <Typography variant="overline" fontWeight="bold">
             PLAYLIST
           </Typography>
-          <Typography variant="h1" fontWeight="bold" sx={{ fontSize: "6rem", my: 2 }}>
+          <Typography variant="h1" fontWeight="bold" sx={{ fontSize: { xs: "2rem", md: "6rem" }, my: 2 }}>
             {playlist?.name}
           </Typography>
-          <Box display="flex" alignItems="center">
+          <Box display="flex" alignItems="center" justifyContent={{ xs: "center", md: "flex-start" }}>
             <Typography variant="body2" fontWeight="bold">
               {playlist?.owner?.display_name}
             </Typography>
@@ -189,9 +196,9 @@ const PlaylistDetailPage = () => {
               <TableRow>
                 <TableCell>#</TableCell>
                 <TableCell>Title</TableCell>
-                <TableCell>Album</TableCell>
-                <TableCell>Date added</TableCell>
-                <TableCell>Duration</TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Album</TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Date added</TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Duration</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

@@ -14,6 +14,7 @@ const Head = styled("div")({
   padding: "8px",
 
   justifyContent: "space-between",
+  marginBottom: "16px", // Add some bottom spacing
 });
 const LibraryHead = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -41,9 +42,9 @@ const LibraryHead = () => {
 
   return (
     <Head>
-      <Box display="flex">
-        <BookmarkIcon sx={{ marginRight: "20px" }} />
-        <Typography variant="h2" fontWeight={700}>
+      <Box display="flex" alignItems="center">
+        <BookmarkIcon sx={{ marginRight: "12px", color: 'text.secondary' }} />
+        <Typography variant="h6" fontWeight={700} color="text.primary">
           Your Library
         </Typography>
       </Box>

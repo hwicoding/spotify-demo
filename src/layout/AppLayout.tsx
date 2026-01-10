@@ -5,6 +5,7 @@ import { NavLink, Outlet } from "react-router";
 import LibraryHead from "./components/LibraryHead";
 import Library from "./components/Library";
 import Navbar from "./components/Navbar";
+import MobileBottomNavigation from "./components/MobileBottomNavigation";
 
 const Layout = styled("div")({
   display: "flex",
@@ -75,12 +76,13 @@ const AppLayout = () => {
           <Library />
         </ContentBox>
       </SideBar>
-      <ContentBox sx={{ flex: 1, display: "flex", flexDirection: "column", ml: 1, overflow: "hidden" }}>
+      <ContentBox sx={{ flex: 1, display: "flex", flexDirection: "column", ml: { xs: 0, sm: 1 }, overflow: "hidden" }}>
         <Navbar />
-        <Box sx={{ flex: 1, overflowY: "auto" }}>
+        <Box sx={{ flex: 1, overflowY: "auto", pb: { xs: '56px', sm: 0 } }}>
           <Outlet />
         </Box>
       </ContentBox>
+      <MobileBottomNavigation />
     </Layout>
   );
 };

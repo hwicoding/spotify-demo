@@ -13,25 +13,29 @@ import { getPlaylistItems } from "../../apis/playlistApi";
 import { Episode } from "../../models/track";
 
 const PlayListItemContainer = styled(ListItemButton)(({ theme, selected }) => ({
-  padding: "8px",
+  padding: "8px 12px", // Slightly more horizontal padding
   alignItems: "center",
-  borderRadius: "8px",
-  backgroundColor: selected ? theme.palette.action.active : "",
+  borderRadius: "6px", // Slightly tighter radius
+  transition: "background-color 0.2s ease", // Smooth transition
+  backgroundColor: selected ? "rgba(255, 255, 255, 0.1)" : "transparent",
   "&:hover": {
-    backgroundColor: theme.palette.action.hover,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
   },
+  marginBottom: "4px", // Tiny space between items
 }));
 const PlaylistAvatar = styled(Avatar)({
-  width: "48px",
-  height: "48px",
-  borderRadius: "8px",
+  width: "56px", // Larger image
+  height: "56px",
+  borderRadius: "4px", // Sharp but slightly rounded corners for album art look
+  marginRight: "16px",
 });
 
 const DefaultAvatar = styled(Avatar)({
-  width: "48px",
-  height: "48px",
-  borderRadius: "8px",
+  width: "56px",
+  height: "56px",
+  borderRadius: "4px",
   backgroundColor: "#282828",
+  marginRight: "16px",
 });
 
 const PlaylistName = styled(Typography)({
@@ -95,17 +99,27 @@ const PlaylistItem = ({
       onClick={() => handleClick(id)}
       selected={selected || false}
     >
-      <ListItemAvatar>
+      <ListItemAvatar sx={{ minWidth: 'auto' }}> {/* Remove default minWidth to control spacing manually */}
         {displayImage ? (
           <PlaylistAvatar src={displayImage} alt={name} />
         ) : (
           <DefaultAvatar variant="square">
-            <MusicNoteIcon />
+            <MusicNoteIcon sx={{ color: '#b3b3b3' }} />
           </DefaultAvatar>
         )}
       </ListItemAvatar>
       <ListItemText
-        primary={<PlaylistName>{name}</PlaylistName>}
+        primary={
+          <PlaylistName
+            variant="subtitle1"
+            sx={{
+              color: selected ? '#1db954' : 'text.primary',
+              marginBottom: '4px'
+            }}
+          >
+            {name}
+          </PlaylistName>
+        }
         secondary={
           <Typography
             variant="body1"

@@ -51,14 +51,14 @@ const DesktopPlaylistItem = ({ item, index }: DesktopPlaylistItemProps) => {
           )}
         </Box>
       </TableCell>
-      <TableCell>{isEpisode(item.track) ? "N/A" : item.track.album?.name}</TableCell>
-      <TableCell>
+      <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>{isEpisode(item.track) ? "N/A" : item.track.album?.name}</TableCell>
+      <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
         {item.added_at ? moment(item.added_at).format("YYYY-MM-DD") : "Unknown"}
       </TableCell>
       {isEpisode(item.track) ? (
-        <TableCell>N/A</TableCell>
+        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>N/A</TableCell>
       ) : (
-        <TableCell>{moment(item.track.duration_ms).format("mm:ss")}</TableCell>
+        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>{moment(item.track.duration_ms).format("mm:ss")}</TableCell>
       )}
       <TableCell align="right">
         {item.track.uri && (
